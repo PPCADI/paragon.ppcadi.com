@@ -22,22 +22,42 @@ Follow [Docksal environment setup instructions](https://docs.docksal.io/getting-
 1. Clone this repo into your Projects directory
 
     ```
-    git clone https://github.com/docksal/boilerplate-drupal9-composer.git drupal9
-    cd drupal9
+    git clone git@github.com:PPCADI/paragon.ppcadi.com.git
+    cd paragon.ppcadi.com
+    ```
+    
+2. clone this repository into the paragon.ppcadi.com directoy
+
+    ```
+   git clone git@github.com:PPCADI/dev-paragon.git web
     ```
 
-2. Initialize the site
+3. Initialize the site
 
     This will initialize local settings and install the site via drush
 
     ```
-    fin init
+    fin init -n
     ```
+    
+3. Copy and import a current database
 
-3. Point your browser to
+    copy db into path paragon.ppcadi.com/db
 
     ```
-    http://drupal9.docksal
+    fin db import db/<db_name>.sql
+    ```     
+
+4. Perform drupal config import and drush cr
+
+    ```
+    fin drush composer install && fin drush cr
+    ```       
+
+4. Point your browser to
+
+    ```
+    http://paragon.ppcadi.com
     ```
 
 When the automated install is complete the command line output will display the admin username and password.
