@@ -16,9 +16,15 @@
     ],
     "require": {
         "composer/installers": "^1.9",
+        "drupal/anonymous_login": "^2.0",
+        "drupal/bootstrap4": "^2.1",
+        "drupal/bootstrap_barrio": "^5.1",
         "drupal/core-composer-scaffold": "^9",
         "drupal/core-project-message": "^9",
         "drupal/core-recommended": "^9",
+        "drupal/fullcalendar_view": "^5.0",
+        "drupal/google_api_client": "^3.0@RC",
+        "drupal/webhooks": "^1.0@alpha",
         "drush/drush": "^10.2"
     },
     "conflict": {

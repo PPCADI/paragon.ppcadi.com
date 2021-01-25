@@ -266,7 +266,7 @@ $databases = [];
  *   $settings['config_sync_directory'] = '/directory/outside/webroot';
  * @endcode
  */
-$config_directories = [];
+$settings['config_sync_directory'] = 'config/default';
 
 /**
  * Settings:
@@ -295,7 +295,7 @@ $config_directories = [];
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
-$settings['hash_salt'] = '';
+$settings['hash_salt'] = 'xu2Vu6KgiFiX8XJEwSRxrOZEPF0xTnK1EF2lGtRVKVMBsxjTay_gao8rqmabeVhHlBEIR3N5tw';
 
 /**
  * Deployment identifier.

@@ -23,14 +23,93 @@ echo-yellow () { echo -e "${yellow}$1${NC}"; }
 
 #-------------------------- Execution --------------------------------
 
+DB_DUMP=true
+# Check for db import.
+while getopts ":ynf" opt; do
+  case $opt in
+    n)
+      DB_DUMP=false
+      ;;
+    f)
+      fin drush site:install --existing-config -y
+      # Prevent composer errors
+      chmod u+w web/sites/default
+      FRESH=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
+
+if [ "${DB_DUMP}" == "true" ]; then
+  fin db dump ${PROJECT_ROOT}/db/latest.sql
+fi
+
 # Stack initialization
 echo -e "${green_bg} Step 1 ${NC}${green} Initializing stack...${NC}"
 fin project reset -f
 
 # Site initialization
 echo -e "${green_bg} Step 2 ${NC}${green} Initializing site...${NC}"
-# This runs inside cli using http://docs.docksal.io/en/v1.4.0/fin/custom-commands/#executing-commands-inside-cli
-fin init-site
+
+
+
+if [ "${DB_DUMP}" == "false" ]; then
+  # This runs inside cli using http://docs.docksal.io/en/v1.4.0/fin/custom-commands/#executing-commands-inside-cli
+  fin init-site
+    # Before we move on, check to see that Drupal is bootstrapping
+  if fin drush status bootstrap | grep -q Successful; then
+      echo -e "${green}Drupal bootstrap verified...${NC}"
+  else
+      echo -e "${red}ERROR:${NC} Drupal bootstrap failed.  Did you import you database?  See above for errors.\n"
+      exit 1
+  fi
+
+  echo -e "${green}Performing database updates...${NC}"
+  fin drush updb -y
+
+  ## Sometimes on Fresh DBs need all the cache clears
+  fin drush cr
+#
+#  echo -e "${green}Config Importing...${NC}"
+#  fin drush cim -y
+else
+  fin db import ${PROJECT_ROOT}/db/latest.sql
+  fin init-up
+
+  # Before we move on, check to see that Drupal is bootstrapping
+  if fin drush status bootstrap | grep -q Successful; then
+      echo -e "${green}Drupal bootstrap verified...${NC}"
+  else
+      echo -e "${red}ERROR:${NC} Drupal bootstrap failed.  Did you import you database?  See above for errors.\n"
+      exit 1
+  fi
+
+  echo -e "${green}Performing database updates...${NC}"
+  fin drush updb -y
+
+  ## Sometimes on Fresh DBs need all the cache clears
+  fin drush cr
+
+  echo -e "${green}Config Importing...${NC}"
+  fin drush cim -y
+fi
+
+## Unblock admin user.
+fin drush uublk admin
+fin drush upwd admin ${DEFAULTPASSWORD}
+printf "Superuser password reset for\n"
+printf "#############################################\n"
+printf "##\n"
+printf "##   Username: admin \n"
+printf "##   Password: ${DEFAULTPASSWORD} \n"
+printf "##\n"
+printf "#############################################\n"
+
+echo -e "${NC}${green}Project URL: ${NC}${yellow}http://${COMPOSE_PROJECT_NAME_SAFE}.docksal"
+
+
 
 echo -e "${green_bg} DONE! ${NC}${green} Completed all initialization steps.${NC}"
 

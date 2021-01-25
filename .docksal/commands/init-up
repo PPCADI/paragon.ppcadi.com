@@ -80,15 +80,6 @@ fix_permissions ()
 	chmod 755 "${SITEDIR_PATH}"
 }
 
-# Install site
-site_install ()
-{
-	cd "$DOCROOT_PATH"
-
-	echo-green "Installing Drupal..."
-	drush site-install standard -y --site-name='Paragon Coach Management Platform'
-}
-
 #-------------------------- END: Functions --------------------------------
 
 #-------------------------- Execution --------------------------------
@@ -97,22 +88,3 @@ site_install ()
 time -p composer_install
 fix_permissions
 init_settings
-time -p site_install
-#DEFAULTPASSWORD=1
-### Unblock admin user.
-#drush uublk admin
-#drush upwd admin $DEFAULTPASSWORD
-#printf "Superuser password reset for\n"
-#printf "#############################################\n"
-#printf "##\n"
-#printf "##   Username: admin \n"
-#printf "##   Password: $DEFAULTPASSWORD \n"
-#printf "##\n"
-#printf "#############################################\n"
-#
-#echo -e "${NC}${green}Project URL: ${NC}${yellow}http://${COMPOSE_PROJECT_NAME_SAFE}.docksal"
-#
-##echo -e "Open ${yellow}http://${VIRTUAL_HOST}${NC} in your browser to verify the setup."
-##echo-yellow "Look for admin login credentials in the output above."
-
-#-------------------------- END: Execution --------------------------------
